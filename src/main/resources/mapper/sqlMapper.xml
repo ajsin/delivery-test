@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.delivery.api.domain.delivery.repository.dao.DeliveryDao">
+    <select id="getOrderList" parameterType="com.delivery.api.domain.delivery.model.vo.OrderListParamVO" resultType="com.delivery.api.domain.delivery.model.vo.OrderListVO">
+        select tor.orderId,
+               tor.uid,
+               tor.shopId,
+               tor.address,
+               tor.orderDate
+        from tblOrder tor, tblOrderMenu tom, tblMenu tm
+        where tor.orderId = tom.orderId
+          and tom.menuId = tm.menuId
+          and tor.uid = #{uid}
+        <if test='startDT != null'>
+            and tor.orderDate <![CDATA[ >= ]]> #{startDT}
+        </if>
+        <if test='endDT != null'>
+            and tor.orderDate <![CDATA[ <= ]]> #{endDT}
+        </if>
+        group by tor.orderId
+        order by tor.orderDate desc
+    </select>
+
+    <update id="updateOrderAddress" parameterType="com.delivery.api.domain.delivery.model.vo.OrderAddressParamVO">
+        update tblOrder
+        set address = #{address}
+        where orderId = #{orderId}
+          and uid = #{uid}
+    </update>
+</mapper>
